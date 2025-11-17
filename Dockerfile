@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd systemd-sysv dbus udev \
     sudo bash-completion \
-    nano git net-tools \
+    nano git wget net-tools \
     build-essential cmake \
     python3-pip python3-colcon-common-extensions python3-rosdep python3-vcstool \
     gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
@@ -29,6 +29,15 @@ ENV ROS_DOMAIN_ID=42
 RUN echo 'source /opt/ros/jazzy/setup.bash' >> /etc/bash.bashrc && \
     echo 'export ROS_DOMAIN_ID=${ROS_DOMAIN_ID}' >> /etc/bash.bashrc &&\
     echo 'source /home/ubuntu/rover_workspace/install/setup.bash' >> /etc/bash.bashrc
+
+RUN wget https://github.com/IntelRealSense/librealsense/raw/master/scripts/libuvc_installation.sh && \
+    sed -i '46s|.*|cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release -DBUILD_EXAMPLES=true -DBUILD_GRAPHICAL_EXAMPLES=true|' libuvc_installation.sh && \
+    chmod +x ./libuvc_installation.sh && \
+    ./libuvc_installation.sh    
+
+RUN apt-get update && apt-get install -y usbutils xorg x11-apps gedit libasio-dev ros-${ROS_DISTRO}-nmea-msgs ros-${ROS_DISTRO}-rtcm-msgs ros-${ROS_DISTRO}-sick-scan-xd ros-${ROS_DISTRO}-rviz2 iputils-ping && rm -rf /var/lib/apt/lists/*
+
+RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN printf '%s\n' '#!/usr/bin/env bash' \
     'set -eo pipefail' \
