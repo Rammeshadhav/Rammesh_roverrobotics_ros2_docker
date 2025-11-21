@@ -1,5 +1,9 @@
 ### Rover Robotics For ROS2 JAZZY
-Docker setup for ROS2 Jazzy 
+Docker setup for ROVER ROBOTICS ROS2 Jazzy:
+
+---
+
+## Step 1
 
 To build image:
 ```
