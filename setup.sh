@@ -201,29 +201,29 @@ if [ "$use_workspace" = true ]; then
         print_green "Done cloning roverrobotics_ros2."
 
         # PS4 controller config: reference logic
-        # By default this script is for Jetson devices. For NON-Jetson (x86, etc.),
-        # apply the ps4_controller_config_jp6.yaml rename as in the reference script.
-        if [ "$is_jetson_device" = false ]; then
-            print_italic "Non-Jetson platform detected -> applying PS4 controller config change (reference setup)."
+        # Repo default: ps4_controller_config.yaml (generic)
+        # Jetson needs: ps4_controller_config_jp6.yaml contents
+        if [ "$is_jetson_device" = true ]; then
+            print_italic "Jetson platform detected -> using ps4_controller_config_jp6.yaml for PS4."
+
             cfg_dir="$WORKSPACE_DIR/src/roverrobotics_ros2/roverrobotics_driver/config"
             if [ -d "$cfg_dir" ]; then
                 cd "$cfg_dir"
-                if [ -f "ps4_controller_config.yaml" ]; then
-                    rm "ps4_controller_config.yaml"
-                    echo "Deleted ps4_controller_config.yaml"
-                fi
+
                 if [ -f "ps4_controller_config_jp6.yaml" ]; then
-                    mv "ps4_controller_config_jp6.yaml" "ps4_controller_config.yaml"
-                    echo "Renamed ps4_controller_config_jp6.yaml to ps4_controller_config.yaml"
+                    # Idempotent: always copy jp6 variant over the default name
+                    cp ps4_controller_config_jp6.yaml ps4_controller_config.yaml
+                    echo "Copied ps4_controller_config_jp6.yaml to ps4_controller_config.yaml (Jetson PS4 config)."
                 else
-                    echo "ps4_controller_config_jp6.yaml not found."
+                    echo "ps4_controller_config_jp6.yaml not found; leaving existing ps4_controller_config.yaml."
                 fi
+
                 cd "$BASEDIR"
             else
                 print_red "Config directory not found for PS4 controller: $cfg_dir"
             fi
         else
-            print_italic "Jetson device: leaving PS4 controller config as-is."
+            print_italic "Non-Jetson platform: using default ps4_controller_config.yaml from repo (no changes)."
         fi
     fi
 
