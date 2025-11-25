@@ -40,7 +40,8 @@ NAME="${CONTAINER_NAME:-rover-jazzy-con}"
 ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-42}"
 
 # We hardcode host home so it works even if service runs as root
-HOST_HOME="/home/rover"
+# HOST_HOME="/home/rover"
+HOST_HOME="${HOST_HOME:-$HOME}"
 CONTAINER_HOME="/home/ubuntu"
 
 RUNTIME_ARGS=()
